@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressDialog progressDialog;
     private List<Person> personList;
     private PersonAdapter mAdapter;
-    private TextView tips;
+    private TextView tips,pro;
     private RadioGroup rg_all;
     private int IDs = 0;
 
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAdapter = new PersonAdapter();
         btn_send = (Button) this.findViewById(R.id.btn_send);
         tips = (TextView) this.findViewById(R.id.tips);
+        pro= (TextView) this.findViewById(R.id.pro);
         btn_send_more = (Button) this.findViewById(R.id.btn_send_more);
         btn_improt = (Button) this.findViewById(R.id.btn_improt);
         btn_improt2= (Button) this.findViewById(R.id.btn_improt2);
@@ -167,10 +168,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             // 批量发送
             case R.id.btn_send_more:
+                pro.setVisibility(View.VISIBLE);
+
+                int total=personList.size();
+                int i=0;
                 for (Person item : personList){
                     sendSms(IDs,item.getPhoneNumber(),item.getMsgContent());
                     // 停顿1s
+                    i=i+1;
+                    pro.setText("开始发送第"+i+"条，共"+total+"条");
                 }
+
                 Toast.makeText(getApplicationContext(), "正在发送,请稍后...", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -328,9 +336,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             android.telephony.SmsManager manager = android.telephony.SmsManager.getDefault();
             if (!TextUtils.isEmpty(phone)) {
                 ArrayList<String> messageList =manager.divideMessage(context);
+
                 for(String text:messageList){
                    // manager.sendTextMessage(phone, null, text, null, null);
                     sendSMS2(phone,text);
+
                 }
 
                /* for (int i = 0; i < messageList.size(); i++) {
