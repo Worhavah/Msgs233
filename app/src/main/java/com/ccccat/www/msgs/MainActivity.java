@@ -205,23 +205,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void run() {
 
             for ( i=0;i<personList.size();i++){
-                //sendMessag(phones.get(i),content,i+1,phones.size());
                 item =  personList.get(i);
-                sendSms(IDs,item.getPhoneNumber(),item.getMsgContent());
-                try {
+                sendMessag(item.getPhoneNumber(),item.getMsgContent(),i+1,0);
 
+                // sendSms(IDs,item.getPhoneNumber(),item.getMsgContent());
+
+                try {
                     Thread.sleep(500);
+
                     Message message=new Message();
                     message.what=1;
-                    handler.sendMessage(message);
+                   handler.sendMessage(message);
 
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "线程睡觉出问题了", Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
 
+    public void sendMessag(String phone,String message,int i,int num ){
+        SmsManager smsManager = SmsManager.getDefault();
+        ArrayList<String> msgs = smsManager.divideMessage(message);
+        for (String msg : msgs) {
+            if (msg != null) {
+                smsManager.sendTextMessage(phone, null, msg, null, null);
+            }
+        }
+    }
 
     private void setupData(List<Person> persons) {
         personList.clear();
@@ -408,6 +420,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
+
 
 
     private void sendSMS2(String phoneNumber, String message)
