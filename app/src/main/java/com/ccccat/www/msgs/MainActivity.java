@@ -45,7 +45,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener ,EasyPermissions.PermissionCallbacks {
     public static String TAG = "SMSMANAGER";
-    private Button btn_send, btn_improt, btn_send_more,btn_improt2;
+    private Button btn_send, btn_improt, btn_send_more,btn_improt2,jump2setting;
     private EditText phoneEt, contextEt;
     private EasyRecyclerView rv_list;
     private ProgressDialog progressDialog;
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_send_more = (Button) this.findViewById(R.id.btn_send_more);
         btn_improt = (Button) this.findViewById(R.id.btn_improt);
         btn_improt2= (Button) this.findViewById(R.id.btn_improt2);
+        jump2setting= (Button) this.findViewById(R.id.jump2setting);
         phoneEt = (EditText) this.findViewById(R.id.phoneNumberEt);
         contextEt = (EditText) this.findViewById(R.id.contextEt);
         rg_all = (RadioGroup) this.findViewById(R.id.rg_all);
@@ -86,7 +87,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rv_list.setAdapter(mAdapter);
         rg_all.setOnCheckedChangeListener(this);
         requestPermission();
-
+        jump2setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goAppDetailSettingIntent(MainActivity.this);
+            }
+        });
 
     }
     String[] perms = {Manifest.permission.SEND_SMS, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE};
@@ -97,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //...
         } else {
             //...
-            EasyPermissions.requestPermissions(this, "拍照需要摄像头权限",
+            EasyPermissions.requestPermissions(this, "需要权限",
                     111, perms);
         }
     }
@@ -283,7 +289,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (requestCode == 1) {
                 Uri uri = data.getData();
                 String path = uri.getPath().toString();
-                String ss=getRealPathFromUri(this,uri);
+                String ss="";
+                try{
+                   ss =getRealPathFromUri(this,uri);
+                }catch (Exception e){
+                    Toast.makeText(MainActivity.this, "地址转换出火锅了", Toast.LENGTH_SHORT);
+                    ss=path;
+                }
+
                 tips.setText(ss);
                 mPath=ss;
                 // 执行Excel数据导入
@@ -299,7 +312,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             return cursor.getString(column_index);
-        } finally {
+        }catch (Exception e){
+            Toast.makeText(MainActivity.this, "地址转换出锅了", Toast.LENGTH_SHORT);
+            return contentUri.getPath().toString();
+        }
+        finally {
             if (cursor != null) {
                 cursor.close();
             }
@@ -431,6 +448,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("sms_body",text); // 设置发送的内容
         intent.setType("vnd.android-dir/mms-sms");
         startActivity(intent);
+    }
+
+    public static void goAppDetailSettingIntent(Context context){
+        Intent localIntent=new Intent();
+        localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(Build.VERSION.SDK_INT>=9){
+            localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+            localIntent.setData(Uri.fromParts("package",context.getPackageName(),null));
+        }else if(Build.VERSION.SDK_INT<=8){
+            localIntent.setAction(Intent.ACTION_VIEW);
+            localIntent.setClassName("com.android.settings","com.android.setting.InstalledAppDetails");
+            localIntent.putExtra("com.android.settings.ApplicationPkgName",context.getPackageName());
+        }
+        context.startActivity(localIntent);
     }
 
 /*    public int sendSMS3(String sms, List<SendItemBean> list) {

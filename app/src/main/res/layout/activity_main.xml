@@ -47,6 +47,16 @@ android:visibility="gone"            android:text=""/>
             android:textColor="@color/white"
             android:textSize="14sp"
             android:text="处理Excel信息"/>
+        <Button
+            android:id="@+id/jump2setting"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:button="@null"
+            android:background="@drawable/btn_main_selector"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:text="设置权限"/>
 
         <EditText
             android:id="@+id/phoneNumberEt"
