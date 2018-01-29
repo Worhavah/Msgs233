@@ -1,0 +1,42 @@
+你将数据复制到附件SHEET1中，或将以下指令复制到宏中，执行宏指令即可。
+
+100一行切
+
+Sub Macro1()
+Dim i As Integer
+For i = 1 To 100
+    Worksheets.Add(after:=Worksheets(Worksheets.Count)).Name = "分解" & i
+    Sheets("sheet1").Activate
+    ActiveSheet.Range(Cells((i - 1) * 100 + 1, 1), Cells(i * 100, 3)).Copy
+    Sheets("分解" & i).Activate
+    ActiveSheet.Paste
+Next
+End Sub
+
+
+Sub Macro1()
+Dim i As Integer
+For i = 1 To 20
+    Worksheets.Add(after:=Worksheets(Worksheets.Count)).Name = "分解" & i
+    Sheets("sheet1").Activate
+    ActiveSheet.Range(Cells((i - 1) * 70 + 1, 1), Cells(i * 70, 3)).Copy
+    Sheets("分解" & i).Activate
+    ActiveSheet.Paste
+Next
+End Sub
+拆表宏
+
+Private Sub 分拆工作表()
+        Dim sht As Worksheet
+        Dim MyBook As Workbook
+        Set MyBook = ActiveWorkbook
+        For Each sht In MyBook.Sheets
+            sht.Copy
+            ActiveWorkbook.SaveAs Filename:=MyBook.Path & "\" & sht.Name
+
+, FileFormat:=xlNormal     '将工作簿另存为EXCEL默认格式
+            ActiveWorkbook.Close
+        Next
+        MsgBox "文件已经被分拆完毕!"
+    End Sub
+保存宏

@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tips,pro;
     private RadioGroup rg_all;
     private int IDs = 0;
+    SmsManager smsManager = SmsManager.getDefault();
+    ArrayList<String> msgs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -211,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // sendSms(IDs,item.getPhoneNumber(),item.getMsgContent());
 
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(300);
 
                     Message message=new Message();
                     message.what=1;
@@ -226,13 +228,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void sendMessag(String phone,String message,int i,int num ){
-        SmsManager smsManager = SmsManager.getDefault();
-        ArrayList<String> msgs = smsManager.divideMessage(message);
+         msgs = smsManager.divideMessage(message);
         for (String msg : msgs) {
             if (msg != null) {
                 smsManager.sendTextMessage(phone, null, msg, null, null);
             }
         }
+
     }
 
     private void setupData(List<Person> persons) {
