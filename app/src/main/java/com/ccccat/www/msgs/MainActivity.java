@@ -13,6 +13,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -45,8 +47,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener ,EasyPermissions.PermissionCallbacks {
     public static String TAG = "SMSMANAGER";
-    private Button btn_send, btn_improt, btn_send_more,btn_improt2,jump2setting;
-    private EditText phoneEt, contextEt;
+    private Button btn_improt, btn_send_more,btn_improt2,jump2setting;
+   // private EditText phoneEt, contextEt;
     private EasyRecyclerView rv_list;
     private ProgressDialog progressDialog;
     private List<Person> personList;
@@ -65,19 +67,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void init() {
         personList = new ArrayList<>();
         mAdapter = new PersonAdapter();
-        btn_send = (Button) this.findViewById(R.id.btn_send);
+       // btn_send = (Button) this.findViewById(R.id.btn_send);
         tips = (TextView) this.findViewById(R.id.tips);
         pro= (TextView) this.findViewById(R.id.pro);
         btn_send_more = (Button) this.findViewById(R.id.btn_send_more);
         btn_improt = (Button) this.findViewById(R.id.btn_improt);
         btn_improt2= (Button) this.findViewById(R.id.btn_improt2);
         jump2setting= (Button) this.findViewById(R.id.jump2setting);
-        phoneEt = (EditText) this.findViewById(R.id.phoneNumberEt);
-        contextEt = (EditText) this.findViewById(R.id.contextEt);
+      //  phoneEt = (EditText) this.findViewById(R.id.phoneNumberEt);
+      //  contextEt = (EditText) this.findViewById(R.id.contextEt);
         rg_all = (RadioGroup) this.findViewById(R.id.rg_all);
         rv_list = (EasyRecyclerView) this.findViewById(R.id.rv_list);
         progressDialog = new ProgressDialog(this);
-        btn_send.setOnClickListener(this);
+        //btn_send.setOnClickListener(this);
         btn_improt.setOnClickListener(this);
         btn_improt2.setOnClickListener(this);
         btn_send_more.setOnClickListener(this);
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return persons;
     }
-
+    int total=0;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     @Override
     public void onClick(View v) {
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new ExcelDataLoader().execute(mPath);
                 break;
             // 发送
-            case R.id.btn_send:
+          /*  case R.id.btn_send:
                 String phone = phoneEt.getText().toString().trim();
                 String context = contextEt.getText().toString().trim();
 
@@ -171,24 +173,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 phoneEt.setText("");
                 contextEt.setText("");
                 Toast.makeText(getApplicationContext(), "发送完毕", Toast.LENGTH_SHORT).show();
-                break;
+                break;*/
             // 批量发送
             case R.id.btn_send_more:
                 pro.setVisibility(View.VISIBLE);
 
-                int total=personList.size();
-                int i=0;
-                for (Person item : personList){
+                total=personList.size();
+                i=0;
+               /* for (Person item : personList){
                     sendSms(IDs,item.getPhoneNumber(),item.getMsgContent());
                     // 停顿1s
                     i=i+1;
                     pro.setText("开始发送第"+i+"条，共"+total+"条");
-                }
-
+                }*/
+                new MyThread().start();
                 Toast.makeText(getApplicationContext(), "正在发送,请稍后...", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            pro.setText("共" + total + "条" + "已发送"+i+"条");
+        }
+    };
+    int i=0;
+    Person item;
+    private class MyThread extends Thread{
+        @Override
+        public void run() {
+
+            for ( i=0;i<personList.size();i++){
+                //sendMessag(phones.get(i),content,i+1,phones.size());
+                item =  personList.get(i);
+                sendSms(IDs,item.getPhoneNumber(),item.getMsgContent());
+                try {
+
+                    Thread.sleep(500);
+                    Message message=new Message();
+                    message.what=1;
+                    handler.sendMessage(message);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     private void setupData(List<Person> persons) {
         personList.clear();
@@ -269,8 +302,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ((TextViewHolder) holder).ll_index.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        phoneEt.setText(personList.get(position).getPhoneNumber());
-                        contextEt.setText(personList.get(position).getMsgContent());
+                     //   phoneEt.setText(personList.get(position).getPhoneNumber());
+                        //contextEt.setText(personList.get(position).getMsgContent());
                     }
                 });
             }

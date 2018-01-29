@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-android:visibility="gone"            android:text=""/>
+        android:text=""/>
         <TextView
             android:id="@+id/tips"
             android:layout_width="match_parent"
@@ -58,7 +58,7 @@ android:visibility="gone"            android:text=""/>
             android:textSize="14sp"
             android:text="设置权限"/>
 
-        <EditText
+     <!--   <EditText
             android:id="@+id/phoneNumberEt"
             android:layout_marginTop="12dp"
             android:layout_width="match_parent"
@@ -82,7 +82,7 @@ android:visibility="gone"            android:text=""/>
             android:button="@null"
             android:textSize="14sp"
             android:background="@drawable/bg_input"
-            android:hint="请输入短信内容"/>
+            android:hint="请输入短信内容"/>-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,7 +116,7 @@ android:visibility="gone"            android:text=""/>
                     android:text="卡2"/>
             </RadioGroup>
 
-            <Button
+        <!--    <Button
                 android:id="@+id/btn_send"
                 android:layout_width="80dp"
                 android:layout_height="40dp"
@@ -126,7 +126,7 @@ android:visibility="gone"            android:text=""/>
                 android:background="@drawable/btn_main_selector"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                android:text="发送"/>
+                android:text="发送"/>-->
 
             <Button
                 android:id="@+id/btn_send_more"
